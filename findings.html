@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Findings{% endblock %}
+
+{% block content %}
+<div class="section-bar">
+  <h1>Findings</h1>
+</div>
+
+<div class="card">
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th><th>Asset</th><th>CVE ID</th><th>Vulnerability</th>
+          <th>Severity</th><th>Status</th><th>First Seen</th><th>Last Seen</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for f in findings %}
+        <tr>
+          <td style="font-family:var(--mono);color:var(--muted)">{{ f['findingid'] }}</td>
+          <td style="font-family:var(--mono)">{{ f['hostname'] }}</td>
+          <td style="font-family:var(--mono);color:var(--accent)">{{ f['cve_id'] or '—' }}</td>
+          <td>{{ f['title'] }}</td>
+          <td>
+            <span class="badge badge-{{ f['severity'] | lower }}">{{ f['severity'] }}</span>
+          </td>
+          <td>
+            {% if f['status'] == 'Open' %}
+              <span class="badge badge-open">Open</span>
+            {% elif f['status'] == 'In Progress' %}
+              <span class="badge badge-progress">In Progress</span>
+            {% else %}
+              <span class="badge badge-resolved">Resolved</span>
+            {% endif %}
+          </td>
+          <td style="color:var(--muted);font-size:.82rem">{{ f['firstseen'] }}</td>
+          <td style="color:var(--muted);font-size:.82rem">{{ f['lastseen'] }}</td>
+          <td style="display:flex;gap:.4rem;flex-wrap:wrap">
+            <a href="/findings/edit/{{ f['findingid'] }}" class="btn btn-warn btn-sm">Edit</a>
+            <form method="POST" action="/findings/delete/{{ f['findingid'] }}"
+                  onsubmit="return confirm('Delete finding #{{ f['findingid'] }}?')">
+              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

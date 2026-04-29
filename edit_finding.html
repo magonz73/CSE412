@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Edit Finding{% endblock %}
+
+{% block content %}
+<h1>Update Finding</h1>
+<p class="page-sub">Modify the status and last seen date for this finding</p>
+
+<div class="card" style="max-width: 560px;">
+
+  <!-- Finding Info (read-only) -->
+  <div style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:16px; margin-bottom:28px;">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:0.875rem;">
+      <div>
+        <span style="color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em;">Hostname</span>
+        <div style="margin-top:4px; font-weight:600;">{{ finding['hostname'] }}</div>
+      </div>
+      <div>
+        <span style="color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em;">CVE ID</span>
+        <div style="margin-top:4px; font-family:'Space Mono',monospace; font-size:0.82rem;">{{ finding['cve_id'] }}</div>
+      </div>
+      <div>
+        <span style="color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em;">Title</span>
+        <div style="margin-top:4px;">{{ finding['title'] }}</div>
+      </div>
+      <div>
+        <span style="color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em;">Severity</span>
+        <div style="margin-top:4px;"><span class="badge badge-{{ finding['severity'] }}">{{ finding['severity'] }}</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Editable Fields -->
+  <form method="POST" action="{{ url_for('edit_finding', finding_id=finding['findingid']) }}">
+
+    <div class="form-group">
+      <label for="status">Status</label>
+      <select id="status" name="status" required>
+        <option value="Open"        {% if finding['status'] == 'Open' %}selected{% endif %}>Open</option>
+        <option value="In Progress" {% if finding['status'] == 'In Progress' %}selected{% endif %}>In Progress</option>
+        <option value="Resolved"    {% if finding['status'] == 'Resolved' %}selected{% endif %}>Resolved</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="lastseen">Last Seen Date</label>
+      <input type="date" id="lastseen" name="lastseen"
+             value="{{ finding['lastseen'] }}" required />
+    </div>
+
+    <div style="display:flex; gap:12px; margin-top:8px;">
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+      <a href="{{ url_for('findings') }}" class="btn btn-ghost">Cancel</a>
+    </div>
+
+  </form>
+</div>
+{% endblock %}

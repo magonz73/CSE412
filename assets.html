@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Assets{% endblock %}
+
+{% block content %}
+<h1>Assets</h1>
+<p class="page-sub">All registered assets in the database</p>
+
+<div class="card">
+  <div class="section-header">
+    <div class="section-title">{{ assets|length }} Asset(s) Found</div>
+    <a href="{{ url_for('add_asset') }}" class="btn btn-primary">Add Asset</a>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Hostname</th>
+        <th>IP Address</th>
+        <th>Operating System</th>
+        <th>Environment</th>
+        <th>Owner</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for a in assets %}
+      <tr>
+        <td style="font-family:'Space Mono',monospace; color:var(--muted);">{{ a['assetid'] }}</td>
+        <td style="font-weight:600;">{{ a['hostname'] }}</td>
+        <td style="font-family:'Space Mono',monospace; font-size:0.82rem;">{{ a['ipaddress'] }}</td>
+        <td>{{ a['operatingsystem'] }}</td>
+        <td><span class="badge badge-{{ a['environment'] }}">{{ a['environment'] }}</span></td>
+        <td>{{ a['ownername'] or '—' }}</td>
+        <td>
+          <form method="POST"
+                action="{{ url_for('delete_asset', asset_id=a['assetid']) }}"
+                onsubmit="return confirm('Delete asset {{ a['hostname'] }}? This cannot be undone.');">
+            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="7" style="color:var(--muted); text-align:center; padding:24px;">
+          No assets found
+          <a href="{{ url_for('add_asset') }}" style="color:var(--accent);">Add one</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
